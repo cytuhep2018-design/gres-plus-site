@@ -1,0 +1,1461 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ООО «ГРЕС-плюс» — Теремок, автоматизация, пекарня</title>
+<meta name="description" content="ООО «ГРЕС-плюс»: розничная торговля, промышленная автоматизация (АСУТП), диско-клуб и бар «Теремок» в Долгиново, пекарня. УНП 190706678.">
+
+<style>
+/* ==================== ПЕРЕМЕННЫЕ ==================== */
+:root{
+  --bg:#140a07;
+  --bg-2:#1e0f0a;
+  --text:#fbeede;
+  --muted:#b39a86;
+  --gold:#e6b655;
+  --gold-2:#ffd97a;
+  --pink:#ff8fb1;
+  --choco:#7a4a2b;
+  --card:rgba(30,15,10,.55);
+  --card-hover:rgba(30,15,10,.78);
+  --border:rgba(230,182,85,.16);
+  --shadow:0 25px 70px rgba(0,0,0,.65);
+  --glow:0 0 40px rgba(230,182,85,.35);
+  --neon:#00d2ff;
+  --neon2:#ff2e93;
+}
+[data-theme="light"]{
+  --bg:#fff7ec;
+  --bg-2:#ffefd8;
+  --text:#2b1a0f;
+  --muted:#7b6350;
+  --gold:#b8791a;
+  --gold-2:#d99a2b;
+  --pink:#e0628a;
+  --card:rgba(255,255,255,.75);
+  --card-hover:rgba(255,255,255,.95);
+  --border:rgba(120,80,30,.15);
+  --shadow:0 25px 60px rgba(120,80,30,.15);
+  --glow:0 0 40px rgba(184,121,26,.3);
+  --neon:#0077aa;
+  --neon2:#c4175e;
+}
+
+/* ==================== БАЗА ==================== */
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Segoe UI',system-ui,-apple-system,'Inter',sans-serif;
+  background:var(--bg);color:var(--text);
+  overflow-x:hidden;line-height:1.65;
+  transition:background .6s ease,color .6s ease;
+}
+::selection{background:var(--gold);color:#1a0d05}
+::-webkit-scrollbar{width:10px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{
+  background:linear-gradient(var(--gold),var(--choco));
+  border-radius:10px;border:2px solid var(--bg);
+}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+
+/* ==================== ПРЕЛОАДЕР ==================== */
+#loader{
+  position:fixed;inset:0;z-index:9999;
+  background:radial-gradient(circle at 50% 50%,var(--bg-2),var(--bg));
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:30px;
+  transition:opacity .8s ease,visibility .8s ease;
+}
+#loader.hide{opacity:0;visibility:hidden}
+.loader-cake{
+  position:relative;width:90px;height:90px;
+  animation:spin 4s linear infinite;
+}
+.loader-cake::before,.loader-cake::after{
+  content:'';position:absolute;inset:0;border-radius:50%;
+  border:3px solid transparent;
+}
+.loader-cake::before{border-top-color:var(--gold);border-right-color:var(--gold-2);animation:spin 1.2s linear infinite}
+.loader-cake::after{border-bottom-color:var(--neon);border-left-color:var(--neon2);animation:spin 1.8s linear infinite reverse;inset:10px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loader-text{
+  font-size:.8rem;letter-spacing:.5em;text-transform:uppercase;color:var(--muted);
+  animation:pulse 1.6s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{opacity:.35}50%{opacity:1}}
+
+/* ==================== ФОН ==================== */
+#webgl{
+  position:fixed;inset:0;z-index:1;pointer-events:none;
+  mask-image:radial-gradient(
+    ellipse 62% 62% at 50% 50%,
+    transparent 0%,
+    transparent 42%,
+    rgba(0,0,0,.3) 62%,
+    rgba(0,0,0,.8) 84%,
+    #000 100%
+  );
+  -webkit-mask-image:radial-gradient(
+    ellipse 62% 62% at 50% 50%,
+    transparent 0%,
+    transparent 42%,
+    rgba(0,0,0,.3) 62%,
+    rgba(0,0,0,.8) 84%,
+    #000 100%
+  );
+  opacity:.85;
+}
+.aurora{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+.blob{position:absolute;border-radius:50%;filter:blur(120px);opacity:.4;will-change:transform}
+.blob.b1{width:560px;height:560px;background:#ff8c42;top:-150px;left:-120px;animation:float1 20s ease-in-out infinite}
+.blob.b2{width:500px;height:500px;background:#e6b655;bottom:-160px;right:-100px;animation:float2 24s ease-in-out infinite}
+.blob.b3{width:440px;height:440px;background:#ff8fb1;top:45%;left:55%;animation:float3 28s ease-in-out infinite}
+.blob.b4{width:380px;height:380px;background:#00d2ff;top:10%;right:20%;animation:float1 22s ease-in-out infinite reverse}
+[data-theme="light"] .blob{opacity:.5}
+@keyframes float1{50%{transform:translate(130px,90px) scale(1.15)}}
+@keyframes float2{50%{transform:translate(-120px,-80px) scale(1.2)}}
+@keyframes float3{50%{transform:translate(-100px,120px) scale(.85)}}
+
+.grain{
+  position:fixed;inset:0;z-index:2;pointer-events:none;opacity:.06;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>");
+  mix-blend-mode:overlay;
+}
+
+/* ==================== КУРСОР ==================== */
+.cursor-dot,.cursor-ring{
+  position:fixed;top:0;left:0;z-index:9998;pointer-events:none;border-radius:50%;
+}
+.cursor-dot{width:6px;height:6px;background:var(--gold-2);transform:translate(-50%,-50%);box-shadow:0 0 10px var(--gold)}
+.cursor-ring{
+  width:40px;height:40px;border:1.5px solid var(--gold);
+  transform:translate(-50%,-50%);
+  transition:width .3s,height .3s,background .3s,border-color .3s;
+}
+.cursor-ring.grow{width:80px;height:80px;background:rgba(230,182,85,.12);border-color:transparent}
+@media (pointer:fine){body{cursor:none}a,button{cursor:none}}
+@media (pointer:coarse){.cursor-dot,.cursor-ring{display:none}}
+
+/* ==================== ПРОГРЕСС ==================== */
+#progress{
+  position:fixed;top:0;left:0;height:3px;width:0;z-index:9997;
+  background:linear-gradient(90deg,var(--choco),var(--gold),var(--neon),var(--neon2));
+  box-shadow:0 0 14px var(--gold);
+  transition:width .1s linear;
+}
+
+/* ==================== ШАПКА ==================== */
+header{
+  position:fixed;top:0;left:0;right:0;z-index:900;
+  padding:20px 6vw;display:flex;align-items:center;justify-content:space-between;
+  transition:all .45s cubic-bezier(.2,.8,.2,1);
+}
+header.scrolled{
+  padding:12px 6vw;
+  background:color-mix(in srgb,var(--bg) 78%,transparent);
+  backdrop-filter:blur(20px) saturate(160%);
+  -webkit-backdrop-filter:blur(20px) saturate(160%);
+  border-bottom:1px solid var(--border);
+}
+.logo{
+  font-weight:800;font-size:1.15rem;letter-spacing:.14em;
+  display:flex;align-items:center;gap:10px;
+}
+.logo-mark{
+  width:32px;height:32px;border-radius:10px;
+  background:conic-gradient(from 0deg,var(--gold),var(--neon),var(--neon2),var(--choco),var(--gold));
+  animation:spin 8s linear infinite;
+  box-shadow:var(--glow);
+  display:grid;place-items:center;font-size:.9rem;
+}
+.logo-text{display:flex;flex-direction:column;line-height:1.05}
+.logo-text b{font-size:1.1rem}
+.logo-text small{font-size:.6rem;letter-spacing:.2em;color:var(--muted);font-weight:600}
+nav{display:flex;gap:26px;align-items:center}
+nav a{
+  color:var(--muted);font-size:.88rem;font-weight:500;
+  position:relative;transition:color .3s;white-space:nowrap;
+}
+nav a::after{
+  content:'';position:absolute;left:0;bottom:-6px;height:2px;width:0;
+  background:linear-gradient(90deg,var(--gold),var(--neon));
+  transition:width .35s cubic-bezier(.2,.8,.2,1);border-radius:2px;
+}
+nav a:hover{color:var(--text)}
+nav a:hover::after{width:100%}
+@media(max-width:1100px){nav{display:none}}
+
+.actions{display:flex;align-items:center;gap:14px}
+.theme-btn{
+  width:44px;height:44px;border-radius:14px;border:1px solid var(--border);
+  background:var(--card);color:var(--text);display:grid;place-items:center;
+  font-size:1.1rem;transition:all .3s;backdrop-filter:blur(10px);
+}
+.theme-btn:hover{transform:translateY(-3px) rotate(-12deg);border-color:var(--gold)}
+
+/* ==================== КНОПКИ ==================== */
+.btn{
+  position:relative;display:inline-flex;align-items:center;gap:10px;
+  padding:16px 34px;border-radius:100px;border:none;
+  font-size:.95rem;font-weight:600;font-family:inherit;
+  color:#1a0d05;overflow:hidden;
+  background:linear-gradient(120deg,var(--gold),var(--gold-2));
+  background-size:200% 200%;
+  transition:transform .3s cubic-bezier(.2,.8,.2,1),box-shadow .3s;
+  box-shadow:0 12px 40px -10px var(--gold);
+}
+.btn:hover{transform:translateY(-4px) scale(1.03);box-shadow:0 20px 50px -10px var(--gold)}
+.btn::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(120deg,transparent,rgba(255,255,255,.55),transparent);
+  transform:translateX(-120%);transition:transform .7s;
+}
+.btn:hover::before{transform:translateX(120%)}
+.btn.ghost{
+  background:var(--card);color:var(--text);
+  border:1px solid var(--border);box-shadow:none;
+  backdrop-filter:blur(12px);
+}
+.btn.ghost:hover{border-color:var(--neon);box-shadow:0 12px 30px -14px var(--neon)}
+
+/* ==================== СЕКЦИИ ==================== */
+section{position:relative;z-index:3;padding:120px 6vw}
+.container{max-width:1240px;margin:0 auto}
+
+/* ==================== HERO ==================== */
+.hero{
+  min-height:100vh;display:flex;flex-direction:column;
+  justify-content:center;align-items:center;text-align:center;
+  padding-top:150px;
+}
+.badge{
+  display:inline-flex;align-items:center;gap:9px;
+  padding:9px 20px;border-radius:100px;
+  border:1px solid var(--border);background:var(--card);
+  font-size:.75rem;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--muted);backdrop-filter:blur(12px);
+  margin-bottom:34px;
+}
+.badge-dot{
+  width:7px;height:7px;border-radius:50%;background:#7dff8e;
+  box-shadow:0 0 12px #7dff8e;animation:pulse 1.8s infinite;
+}
+.hero h1{
+  font-size:clamp(2.4rem,8.5vw,6rem);
+  font-weight:900;line-height:1.02;letter-spacing:-.035em;
+  margin-bottom:28px;
+}
+.gradient-text{
+  background:linear-gradient(110deg,var(--gold),var(--neon),var(--neon2),var(--gold));
+  background-size:300% 100%;
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;color:transparent;
+  animation:shine 6s linear infinite;
+}
+@keyframes shine{to{background-position:300% 0}}
+.hero p{
+  max-width:680px;color:var(--muted);font-size:clamp(1rem,2vw,1.2rem);
+  margin-bottom:46px;
+}
+.typed{
+  color:var(--neon);font-weight:700;
+  border-right:2px solid var(--neon);
+  padding-right:3px;animation:caret .85s step-end infinite;
+}
+@keyframes caret{50%{border-color:transparent}}
+.hero-buttons{display:flex;gap:16px;flex-wrap:wrap;justify-content:center}
+
+.scroll-hint{
+  position:absolute;bottom:36px;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:9px;
+  color:var(--muted);font-size:.7rem;letter-spacing:.25em;text-transform:uppercase;
+}
+.mouse{
+  width:24px;height:38px;border:1.5px solid var(--border);border-radius:14px;
+  display:flex;justify-content:center;padding-top:7px;
+}
+.mouse i{
+  width:3px;height:7px;border-radius:2px;background:var(--neon);
+  animation:wheel 1.7s ease-in-out infinite;
+}
+@keyframes wheel{0%{opacity:0;transform:translateY(0)}40%{opacity:1}100%{opacity:0;transform:translateY(12px)}}
+
+/* ==================== БЕГУЩАЯ СТРОКА ==================== */
+.marquee{
+  position:relative;z-index:3;overflow:hidden;
+  border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+  padding:22px 0;background:var(--card);backdrop-filter:blur(10px);
+  mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);
+}
+.marquee-track{display:flex;gap:56px;width:max-content;animation:scroll-x 32s linear infinite}
+.marquee:hover .marquee-track{animation-play-state:paused}
+.marquee-track span{
+  font-size:1.05rem;font-weight:700;letter-spacing:.12em;
+  color:var(--muted);text-transform:uppercase;white-space:nowrap;
+  display:flex;align-items:center;gap:56px;
+  transition:color .3s;
+}
+.marquee-track span:hover{color:var(--neon)}
+@keyframes scroll-x{to{transform:translateX(-50%)}}
+
+/* ==================== ЗАГОЛОВКИ ==================== */
+.section-head{text-align:center;margin-bottom:80px}
+.section-head .kicker{
+  font-size:.75rem;letter-spacing:.35em;text-transform:uppercase;
+  color:var(--neon);font-weight:700;margin-bottom:14px;
+}
+.section-head h2{
+  font-size:clamp(2rem,5.5vw,3.6rem);font-weight:800;letter-spacing:-.025em;
+  margin-bottom:16px;
+}
+.section-head p{color:var(--muted);max-width:640px;margin:0 auto}
+
+/* ==================== О КОМПАНИИ ==================== */
+.about{
+  display:grid;grid-template-columns:1fr 1fr;gap:70px;align-items:center;
+}
+@media(max-width:900px){.about{grid-template-columns:1fr;gap:44px}}
+.about h2{font-size:clamp(1.9rem,4.6vw,3.1rem);font-weight:800;margin-bottom:22px;letter-spacing:-.02em}
+.about p{color:var(--muted);margin-bottom:18px}
+.feat-list{list-style:none;display:flex;flex-direction:column;gap:14px;margin-bottom:36px}
+.feat-list li{display:flex;gap:14px;align-items:flex-start;color:var(--muted);font-size:.95rem}
+.feat-list i{
+  flex:none;width:24px;height:24px;border-radius:50%;margin-top:2px;
+  background:linear-gradient(135deg,var(--gold),var(--neon));
+  display:grid;place-items:center;font-style:normal;font-size:.75rem;
+  color:#1a0d05;font-weight:900;
+}
+.visual{
+  position:relative;height:460px;border-radius:30px;overflow:hidden;
+  border:1px solid var(--border);background:var(--card);
+  backdrop-filter:blur(14px);box-shadow:var(--shadow);
+}
+.visual .layer{
+  position:absolute;border-radius:50%;filter:blur(2px);
+  transition:transform .25s ease-out;will-change:transform;
+  display:grid;place-items:center;font-size:4rem;
+}
+.visual .l1{width:200px;height:200px;background:radial-gradient(circle,var(--gold),transparent 70%);top:8%;left:8%;opacity:.9}
+.visual .l2{width:220px;height:220px;background:radial-gradient(circle,var(--neon),transparent 70%);bottom:8%;right:8%;opacity:.85}
+.visual .l3{width:150px;height:150px;background:radial-gradient(circle,var(--choco),transparent 70%);top:48%;left:40%;opacity:.9}
+.visual-grid{
+  position:absolute;inset:0;
+  background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);
+  background-size:44px 44px;opacity:.5;
+}
+
+/* ==================== АСУТП ==================== */
+.automation{
+  display:grid;grid-template-columns:1fr 1fr;gap:70px;align-items:center;
+}
+@media(max-width:900px){.automation{grid-template-columns:1fr;gap:44px}}
+.automation h2{font-size:clamp(1.9rem,4.6vw,3.1rem);font-weight:800;margin-bottom:22px}
+.automation p{color:var(--muted);margin-bottom:18px}
+.brands{
+  display:flex;flex-wrap:wrap;gap:12px;margin-bottom:30px;
+}
+.brand{
+  padding:10px 20px;border-radius:100px;
+  border:1px solid var(--border);background:var(--card);
+  font-size:.85rem;font-weight:600;color:var(--text);
+  backdrop-filter:blur(10px);
+  transition:all .3s;
+}
+.brand:hover{
+  border-color:var(--neon);
+  transform:translateY(-3px);
+  box-shadow:0 8px 20px -8px var(--neon);
+}
+.automation-visual{
+  position:relative;height:400px;border-radius:30px;overflow:hidden;
+  border:1px solid var(--border);background:var(--card);
+  box-shadow:var(--shadow);
+}
+.automation-visual img{
+  width:100%;height:100%;object-fit:cover;
+  transition:transform .8s cubic-bezier(.2,.8,.2,1);
+}
+.automation-visual:hover img{transform:scale(1.06)}
+.automation-visual::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(180deg,transparent 40%,rgba(0,0,0,.6));
+  pointer-events:none;
+}
+
+/* ==================== ТОВАРЫ ==================== */
+.products{
+  display:grid;gap:26px;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  perspective:1400px;
+}
+.product{
+  position:relative;padding:0;border-radius:26px;overflow:hidden;
+  background:var(--card);border:1px solid var(--border);
+  backdrop-filter:blur(24px);
+  transform-style:preserve-3d;
+  transition:transform .6s cubic-bezier(.2,.8,.2,1),box-shadow .5s,border-color .4s,background .4s;
+  will-change:transform;
+}
+.product::after{
+  content:'';position:absolute;inset:0;border-radius:26px;
+  background:radial-gradient(400px circle at var(--mx,50%) var(--my,50%),
+    color-mix(in srgb,var(--gold) 28%,transparent),transparent 62%);
+  opacity:0;transition:opacity .4s;pointer-events:none;
+}
+.product:hover::after{opacity:1}
+.product:hover{
+  background:var(--card-hover);
+  border-color:color-mix(in srgb,var(--gold) 55%,transparent);
+  box-shadow:var(--shadow);
+}
+.product-img{
+  height:200px;position:relative;overflow:hidden;
+}
+.product-img img{
+  width:100%;height:100%;object-fit:cover;
+  transition:transform .6s cubic-bezier(.2,.8,.2,1);
+}
+.product:hover .product-img img{transform:scale(1.08)}
+.product-img::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at 30% 30%,rgba(255,255,255,.25),transparent 55%);
+  z-index:1;pointer-events:none;
+}
+.product-body{padding:26px 28px 30px;transform:translateZ(30px)}
+.product h3{font-size:1.25rem;margin-bottom:8px}
+.product .desc{color:var(--muted);font-size:.9rem;margin-bottom:16px}
+.product .price{
+  font-size:1.35rem;font-weight:800;
+  background:linear-gradient(120deg,var(--gold),var(--neon));
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;color:transparent;
+}
+
+/* ==================== ДИСКО-КЛУБ ==================== */
+.club{
+  display:grid;grid-template-columns:1fr 1fr;gap:70px;align-items:center;
+}
+@media(max-width:900px){.club{grid-template-columns:1fr;gap:44px}}
+.club h2{font-size:clamp(1.9rem,4.6vw,3.1rem);font-weight:800;margin-bottom:22px}
+.club p{color:var(--muted);margin-bottom:18px}
+.club-visual{
+  position:relative;height:420px;border-radius:30px;overflow:hidden;
+  border:1px solid var(--border);box-shadow:var(--shadow);
+}
+.club-visual img{
+  width:100%;height:100%;object-fit:cover;
+  transition:transform .8s cubic-bezier(.2,.8,.2,1);
+}
+.club-visual:hover img{transform:scale(1.06)}
+.club-visual::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(180deg,transparent 30%,rgba(0,0,0,.7));
+  pointer-events:none;
+}
+.club-badge{
+  position:absolute;bottom:24px;left:24px;z-index:2;
+  padding:10px 22px;border-radius:100px;
+  background:rgba(0,0,0,.6);backdrop-filter:blur(10px);
+  color:#fff;font-size:.85rem;font-weight:700;letter-spacing:.1em;
+}
+
+/* ==================== СТАТИСТИКА ==================== */
+.stats{
+  display:grid;gap:22px;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  text-align:center;
+}
+.stat{
+  padding:46px 22px;border-radius:24px;
+  border:1px solid var(--border);background:var(--card);
+  backdrop-filter:blur(24px);
+  transition:transform .4s,border-color .4s;
+}
+.stat:hover{transform:translateY(-10px);border-color:var(--neon)}
+.stat-num{
+  font-size:clamp(2.2rem,6vw,3.6rem);font-weight:900;letter-spacing:-.03em;
+  background:linear-gradient(120deg,var(--gold-2),var(--neon));
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;color:transparent;
+}
+.stat-label{
+  color:var(--muted);font-size:.78rem;letter-spacing:.18em;
+  text-transform:uppercase;margin-top:10px;
+}
+
+/* ==================== ГАЛЕРЕЯ ==================== */
+.gallery{
+  display:grid;gap:18px;
+  grid-template-columns:repeat(4,1fr);
+  grid-auto-rows:180px;
+}
+.gallery-item{
+  position:relative;border-radius:22px;overflow:hidden;
+  border:1px solid var(--border);
+  transition:transform .5s cubic-bezier(.2,.8,.2,1),box-shadow .5s;
+  cursor:pointer;
+}
+.gallery-item img{
+  width:100%;height:100%;object-fit:cover;
+  transition:transform .6s cubic-bezier(.2,.8,.2,1);
+}
+.gallery-item:hover img{transform:scale(1.08)}
+.gallery-item:hover{transform:scale(1.03) rotate(-1deg);box-shadow:var(--shadow);z-index:2}
+.gallery-item::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(180deg,transparent 50%,rgba(0,0,0,.5));
+  opacity:0;transition:opacity .4s;z-index:2;pointer-events:none;
+}
+.gallery-item:hover::after{opacity:1}
+.gallery-caption{
+  position:absolute;bottom:14px;left:18px;z-index:3;
+  color:#fff;font-size:.82rem;font-weight:600;
+  opacity:0;transform:translateY(10px);
+  transition:all .4s;
+}
+.gallery-item:hover .gallery-caption{opacity:1;transform:translateY(0)}
+.g1{grid-column:span 2;grid-row:span 2}
+.g6{grid-column:span 2}
+@media(max-width:760px){
+  .gallery{grid-template-columns:repeat(2,1fr);grid-auto-rows:140px}
+  .g1{grid-column:span 2;grid-row:span 2}
+  .g6{grid-column:span 2}
+}
+
+/* ==================== РЕКВИЗИТЫ ==================== */
+.requisites{
+  display:grid;gap:0;
+  grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+  border:1px solid var(--border);border-radius:26px;
+  overflow:hidden;background:var(--card);
+  backdrop-filter:blur(24px);
+}
+.requisite{
+  padding:30px 32px;
+  border-right:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+  transition:background .4s;
+}
+.requisite:hover{background:var(--card-hover)}
+.requisite .label{
+  font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--gold);font-weight:700;margin-bottom:10px;
+}
+.requisite .value{
+  font-size:1rem;color:var(--text);font-weight:600;line-height:1.5;
+}
+.requisite .sub{
+  font-size:.82rem;color:var(--muted);margin-top:6px;
+}
+
+/* ==================== КОНТАКТЫ ==================== */
+.contacts{
+  display:grid;gap:24px;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+}
+.contact-card{
+  padding:38px 32px;border-radius:24px;
+  border:1px solid var(--border);background:var(--card);
+  backdrop-filter:blur(24px);text-align:center;
+  transition:transform .4s,border-color .4s,box-shadow .4s;
+}
+.contact-card:hover{transform:translateY(-8px);border-color:var(--neon);box-shadow:var(--shadow)}
+.contact-icon{
+  width:64px;height:64px;border-radius:20px;margin:0 auto 22px;
+  background:linear-gradient(135deg,var(--gold),var(--neon));
+  display:grid;place-items:center;font-size:1.7rem;color:#1a0d05;
+}
+.contact-card h3{font-size:1.05rem;margin-bottom:10px;color:var(--text)}
+.contact-card a, .contact-card p{
+  color:var(--muted);font-size:.95rem;display:block;margin-bottom:6px;
+  transition:color .3s;
+}
+.contact-card a:hover{color:var(--neon)}
+
+/* ==================== CTA ==================== */
+.cta{
+  text-align:center;padding:90px 6vw;border-radius:38px;
+  border:1px solid var(--border);
+  background:
+    radial-gradient(700px circle at 50% 0%,color-mix(in srgb,var(--neon) 20%,transparent),transparent 70%),
+    var(--card);
+  backdrop-filter:blur(24px);position:relative;overflow:hidden;
+}
+.cta h2{font-size:clamp(2rem,5.5vw,3.4rem);font-weight:800;margin-bottom:18px;letter-spacing:-.025em}
+.cta p{color:var(--muted);max-width:560px;margin:0 auto 40px}
+
+/* ==================== ФУТЕР ==================== */
+footer{
+  position:relative;z-index:3;padding:60px 6vw 34px;
+  border-top:1px solid var(--border);
+  display:flex;flex-wrap:wrap;gap:24px;
+  align-items:center;justify-content:space-between;
+  color:var(--muted);font-size:.87rem;
+}
+.socials{display:flex;gap:12px}
+.socials a{
+  width:44px;height:44px;border-radius:14px;display:grid;place-items:center;
+  border:1px solid var(--border);background:var(--card);color:var(--muted);
+  font-size:1.05rem;transition:all .3s;
+}
+.socials a:hover{
+  transform:translateY(-4px);color:#1a0d05;
+  background:linear-gradient(135deg,var(--gold),var(--neon));
+  border-color:transparent;
+}
+
+/* ==================== ПОЯВЛЕНИЕ ==================== */
+.reveal{
+  opacity:0;transform:translateY(50px);
+  transition:opacity .95s cubic-bezier(.2,.8,.2,1),transform .95s cubic-bezier(.2,.8,.2,1);
+}
+.reveal.visible{opacity:1;transform:none}
+.reveal[data-delay="1"]{transition-delay:.1s}
+.reveal[data-delay="2"]{transition-delay:.2s}
+.reveal[data-delay="3"]{transition-delay:.3s}
+.reveal[data-delay="4"]{transition-delay:.4s}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+  html{scroll-behavior:auto}
+}
+</style>
+</head>
+<body>
+
+<!-- ПРЕЛОАДЕР -->
+<div id="loader">
+  <div class="loader-cake"></div>
+  <div class="loader-text">Загрузка…</div>
+</div>
+
+<!-- ФОН -->
+<div class="aurora">
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="blob b3"></div>
+  <div class="blob b4"></div>
+</div>
+<canvas id="webgl"></canvas>
+<div class="grain"></div>
+
+<!-- КУРСОР -->
+<div class="cursor-dot"></div>
+<div class="cursor-ring"></div>
+
+<!-- ПРОГРЕСС -->
+<div id="progress"></div>
+
+<!-- ШАПКА -->
+<header id="header">
+  <div class="logo">
+    <div class="logo-mark">⚙️</div>
+    <div class="logo-text">
+      <b>ГРЕС-плюс</b>
+      <small>АСУТП · ТЕРЕМОК · ПЕКАРНЯ</small>
+    </div>
+  </div>
+  <nav>
+    <a href="#about">О компании</a>
+    <a href="#automation">Автоматизация</a>
+    <a href="#products">Ассортимент</a>
+    <a href="#club">Диско-клуб</a>
+    <a href="#gallery">Галерея</a>
+    <a href="#requisites">Реквизиты</a>
+    <a href="#contacts">Контакты</a>
+  </nav>
+  <div class="actions">
+    <button class="theme-btn" id="themeBtn" aria-label="Сменить тему">🌙</button>
+    <a href="#contacts" class="btn" style="padding:12px 26px;font-size:.87rem">Связаться</a>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="badge"><span class="badge-dot"></span>Работаем с 2006 года · УНП 190706678</div>
+  <h1>
+    Инженеры. <span class="gradient-text">Пекари.</span><br>
+    Организаторы досуга.
+  </h1>
+  <p>ООО «ГРЕС-плюс» — белорусская компания с тремя направлениями: промышленная автоматизация (АСУТП), розничная торговля и пекарня, а также диско-клуб и бар «Теремок» в Долгиново.</p>
+  <div class="hero-buttons">
+    <a href="#automation" class="btn">Наши компетенции →</a>
+    <a href="#club" class="btn ghost">Диско-клуб</a>
+  </div>
+  <div class="scroll-hint">
+    <div class="mouse"><i></i></div>
+    Скролл
+  </div>
+</section>
+
+<!-- БЕГУЩАЯ СТРОКА -->
+<div class="marquee">
+  <div class="marquee-track" id="marquee">
+    <span>АСУТП ★ Siemens ★ Keyence ★ Omron ★ Beckhoff ★ Теремок ★ Диско-клуб ★ Бар ★ Пекарня ★ Хлеб ★ Долгиново ★</span>
+  </div>
+</div>
+
+<!-- О КОМПАНИИ -->
+<section id="about">
+  <div class="container about">
+    <div class="reveal">
+      <div class="kicker" style="color:var(--neon);letter-spacing:.35em;font-size:.75rem;font-weight:700;text-transform:uppercase;margin-bottom:14px">О компании</div>
+      <h2>Многопрофильный бизнес <span class="gradient-text">с 2006 года</span></h2>
+      <p>ООО «ГРЕС-плюс» зарегистрировано 5 апреля 2006 года Минским городским исполнительным комитетом. Сегодня компания развивает сразу несколько направлений: от промышленной автоматизации до розничной торговли и организации досуга.</p>
+      <ul class="feat-list">
+        <li><i>✓</i> <b>АСУТП с 2014 года</b> — программирование промышленной автоматики для пищевой и других отраслей</li>
+        <li><i>✓</i> <b>Комплекс «Теремок»</b> — магазин, пекарня, бар и банкетный зал в аг. Долгиново</li>
+        <li><i>✓</i> <b>Диско-клуб с 2012 года</b> — место отдыха для жителей и гостей Вилейского района</li>
+        <li><i>✓</i> В 2020 году — на районной Доске почёта за вклад в развитие предпринимательства</li>
+      </ul>
+      <a href="#automation" class="btn">Подробнее о направлениях</a>
+    </div>
+
+    <div class="visual reveal" data-delay="2" id="visual">
+      <div class="visual-grid"></div>
+      <div class="layer l1" data-depth="30">⚙️</div>
+      <div class="layer l2" data-depth="55">🥖</div>
+      <div class="layer l3" data-depth="85">🎧</div>
+    </div>
+  </div>
+</section>
+
+<!-- АСУТП -->
+<section id="automation">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="kicker">Промышленная автоматизация</div>
+      <h2>АСУТП <span class="gradient-text">с 2014 года</span></h2>
+      <p>С 2014 года компания «ГРЕС-плюс» занимается разработкой и внедрением систем автоматизации технологических процессов (АСУТП) для пищевой и других отраслей промышленности.</p>
+    </div>
+
+    <div class="automation">
+      <div class="reveal">
+        <h2>Программируем <span class="gradient-text">промышленную автоматику</span></h2>
+        <p>Мы работаем с оборудованием ведущих мировых производителей. Наши инженеры программируют контроллеры, разрабатывают SCADA-системы, настраивают частотные преобразователи и системы технического зрения.</p>
+        <p>Специализация — пищевая промышленность: линии розлива, фасовки, упаковки, дозирования, а также автоматизация хлебопекарных производств.</p>
+        <div class="brands">
+          <span class="brand">Siemens</span>
+          <span class="brand">Keyence</span>
+          <span class="brand">Omron</span>
+          <span class="brand">Beckhoff</span>
+        </div>
+        <a href="#contacts" class="btn">Обсудить проект</a>
+      </div>
+      <div class="automation-visual reveal" data-delay="2">
+        <img src="https://loremflickr.com/800/600/industrial,automation,plc" alt="Промышленная автоматизация">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- АССОРТИМЕНТ -->
+<section id="products">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="kicker">Ассортимент</div>
+      <h2>Свежее <span class="gradient-text">каждое утро</span></h2>
+      <p>Собственная выпечка, продукты повседневного спроса и уютное кафе — всё в комплексе «Теремок».</p>
+    </div>
+
+    <div class="products">
+      <div class="product reveal tilt" data-delay="1">
+        <div class="product-img"><img src="https://loremflickr.com/600/400/baguette,bread" alt="Багет"></div>
+        <div class="product-body">
+          <h3>Багет классический</h3>
+          <p class="desc">Хрустящая корочка, воздушный мякиш. Печём на месте.</p>
+          <div class="price">180 ₽</div>
+        </div>
+      </div>
+      <div class="product reveal tilt" data-delay="2">
+        <div class="product-img"><img src="https://loremflickr.com/600/400/croissant" alt="Круассан"></div>
+        <div class="product-body">
+          <h3>Круассан сливочный</h3>
+          <p class="desc">27 слоёв, сливочное масло. К утреннему кофе.</p>
+          <div class="price">150 ₽</div>
+        </div>
+      </div>
+      <div class="product reveal tilt" data-delay="3">
+        <div class="product-img"><img src="https://loremflickr.com/600/400/dark,bread,rye" alt="Чёрный хлеб"></div>
+        <div class="product-body">
+          <h3>Чёрный хлеб на закваске</h3>
+          <p class="desc">Ржаной, тёмный, с хрустящей корочкой и семенами льна.</p>
+          <div class="price">220 ₽</div>
+        </div>
+      </div>
+      <div class="product reveal tilt" data-delay="1">
+        <div class="product-img"><img src="https://loremflickr.com/600/400/cake,birthday" alt="Торт"></div>
+        <div class="product-body">
+          <h3>Торт на заказ</h3>
+          <p class="desc">Влажные коржи, крем-чиз, ягодная прослойка. На праздник.</p>
+          <div class="price">2 400 ₽</div>
+        </div>
+      </div>
+      <div class="product reveal tilt" data-delay="2">
+        <div class="product-img"><img src="https://loremflickr.com/600/400/pastry,dessert" alt="Пирожное"></div>
+        <div class="product-body">
+          <h3>Пирожное «Фисташка»</h3>
+          <p class="desc">Мусс из настоящей фисташки, малиновое сердце.</p>
+          <div class="price">290 ₽</div>
+        </div>
+      </div>
+      <div class="product reveal tilt" data-delay="3">
+        <div class="product-img"><img src="https://loremflickr.com/600/400/cookie,chocolate" alt="Печенье"></div>
+        <div class="product-body">
+          <h3>Печенье с шоколадом</h3>
+          <p class="desc">Бельгийский шоколад кусочками, хрустящие края.</p>
+          <div class="price">90 ₽</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ДИСКО-КЛУБ -->
+<section id="club">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="kicker">Развлечения</div>
+      <h2>Диско-клуб <span class="gradient-text">«Теремок»</span></h2>
+      <p>С 2012 года — главное место отдыха в Долгиново. Танцпол, бар, бильярд и банкетный зал под одной крышей.</p>
+    </div>
+
+    <div class="club">
+      <div class="club-visual reveal">
+        <img src="https://loremflickr.com/900/600/disco,nightclub,party" alt="Диско-клуб Теремок">
+        <div class="club-badge">🎧 с 2012 года</div>
+      </div>
+      <div class="reveal" data-delay="2">
+        <h2>Музыка, свет и <span class="gradient-text">хорошее настроение</span></h2>
+        <p>Бар-клуб «Теремок» сочетает функции бара, дискотеки и банкетного зала. Здесь проводят выходные, отмечают праздники, играют в бильярд и просто хорошо проводят время.</p>
+        <p>В меню — пиво в розлив, алкоголь на любой вкус и вкусные закуски. По выходным — дискотеки с отличной музыкой и атмосферой, которую отмечают даже гости из других районов.</p>
+        <ul class="feat-list">
+          <li><i>✓</i> Танцпол и дискотека каждые выходные</li>
+          <li><i>✓</i> Бар с широким выбором напитков</li>
+          <li><i>✓</i> Бильярд и зона отдыха</li>
+          <li><i>✓</i> Банкетный зал для праздников и юбилеев</li>
+        </ul>
+        <a href="#contacts" class="btn">Забронировать столик</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- СТАТИСТИКА -->
+<section id="stats">
+  <div class="container">
+    <div class="stats">
+      <div class="stat reveal"><div class="stat-num" data-target="20" data-suffix="+">0</div><div class="stat-label">Лет на рынке</div></div>
+      <div class="stat reveal" data-delay="1"><div class="stat-num" data-target="12" data-suffix="+">0</div><div class="stat-label">Лет в АСУТП</div></div>
+      <div class="stat reveal" data-delay="2"><div class="stat-num" data-target="14" data-suffix="+">0</div><div class="stat-label">Лет диско-клубу</div></div>
+      <div class="stat reveal" data-delay="3"><div class="stat-num" data-target="4">0</div><div class="stat-label">Бренда автоматики</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ГАЛЕРЕЯ -->
+<section id="gallery">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="kicker">Галерея</div>
+      <h2>Наша <span class="gradient-text">жизнь</span> в кадре</h2>
+      <p>Производство, выпечка, дискотека и бар — загляните за кулисы.</p>
+    </div>
+
+    <div class="gallery">
+      <div class="gallery-item g1 reveal">
+        <img src="https://loremflickr.com/1200/800/bakery,bread,production" alt="Производство хлеба">
+        <div class="gallery-caption">Производство хлеба</div>
+      </div>
+      <div class="gallery-item reveal" data-delay="1">
+        <img src="https://loremflickr.com/600/600/plc,automation" alt="Промышленная автоматизация">
+        <div class="gallery-caption">АСУТП</div>
+      </div>
+      <div class="gallery-item reveal" data-delay="2">
+        <img src="https://loremflickr.com/600/600/disco,lights" alt="Дискотека">
+        <div class="gallery-caption">Диско-клуб</div>
+      </div>
+      <div class="gallery-item reveal" data-delay="1">
+        <img src="https://loremflickr.com/600/600/bar,cocktail" alt="Бар">
+        <div class="gallery-caption">Бар «Теремок»</div>
+      </div>
+      <div class="gallery-item reveal" data-delay="2">
+        <img src="https://loremflickr.com/600/600/bread,bakery" alt="Выпечка">
+        <div class="gallery-caption">Свежая выпечка</div>
+      </div>
+      <div class="gallery-item g6 reveal" data-delay="3">
+        <img src="https://loremflickr.com/1200/600/nightclub,party,crowd" alt="Атмосфера дискотеки">
+        <div class="gallery-caption">Атмосфера дискотеки</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- РЕКВИЗИТЫ -->
+<section id="requisites">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="kicker">Юридическая информация</div>
+      <h2>Реквизиты <span class="gradient-text">компании</span></h2>
+      <p>Полные регистрационные данные ООО «ГРЕС-плюс» по состоянию на 2026 год.</p>
+    </div>
+
+    <div class="requisites reveal" data-delay="1">
+      <div class="requisite">
+        <div class="label">Полное наименование</div>
+        <div class="value">ООО «ГРЕС-плюс»</div>
+        <div class="sub">Общество с ограниченной ответственностью</div>
+      </div>
+      <div class="requisite">
+        <div class="label">УНП</div>
+        <div class="value">190706678</div>
+        <div class="sub">Учётный номер плательщика</div>
+      </div>
+      <div class="requisite">
+        <div class="label">Дата регистрации</div>
+        <div class="value">5 апреля 2006 года</div>
+        <div class="sub">Минский городской исполнительный комитет</div>
+      </div>
+      <div class="requisite">
+        <div class="label">Статус</div>
+        <div class="value">Действующее предприятие</div>
+        <div class="sub">В процедурах ликвидации не состоит</div>
+      </div>
+      <div class="requisite">
+        <div class="label">Юридический адрес</div>
+        <div class="value">220036, г. Минск,<br>проезд Бетонный, д. 19А, оф. 4</div>
+        <div class="sub">Московский район</div>
+      </div>
+      <div class="requisite">
+        <div class="label">Основной вид деятельности</div>
+        <div class="value">ОКЭД 47110</div>
+        <div class="sub">Розничная торговля преимущественно продуктами питания, напитками и табачными изделиями</div>
+      </div>
+      <div class="requisite">
+        <div class="label">Дополнительные направления</div>
+        <div class="value">АСУТП с 2014 года,<br>торгово-закупочная деятельность,<br>логистика</div>
+        <div class="sub">Промышленная автоматизация, экспедирование грузов</div>
+      </div>
+      <div class="requisite">
+        <div class="label">Награды</div>
+        <div class="value">Доска почёта Минской области</div>
+        <div class="sub">Занесено в 2020 году за вклад в развитие предпринимательства</div>
+      </div>
+      <div class="requisite">
+        <div class="label">Развлекательные объекты</div>
+        <div class="value">Диско-клуб и бар «Теремок»</div>
+        <div class="sub">Работает с 2012 года в аг. Долгиново</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- КОНТАКТЫ -->
+<section id="contacts">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="kicker">Связаться с нами</div>
+      <h2>Контакты <span class="gradient-text">администрации</span></h2>
+      <p>Звоните, пишите — мы всегда рады ответить на ваши вопросы.</p>
+    </div>
+
+    <div class="contacts">
+      <div class="contact-card reveal" data-delay="1">
+        <div class="contact-icon">📱</div>
+        <h3>Мобильный</h3>
+        <a href="tel:+375296088282">+375 (29) 608-82-82</a>
+        <p>Администрация</p>
+      </div>
+      <div class="contact-card reveal" data-delay="2">
+        <div class="contact-icon">📞</div>
+        <h3>Городской</h3>
+        <a href="tel:+375177121965">+375 (1771) 2-19-65</a>
+        <p>Комплекс «Теремок»</p>
+      </div>
+      <div class="contact-card reveal" data-delay="3">
+        <div class="contact-icon">✉️</div>
+        <h3>Email</h3>
+        <a href="mailto:gres2008@mail.ru">gres2008@mail.ru</a>
+        <p>Пишите в любое время</p>
+      </div>
+      <div class="contact-card reveal" data-delay="4">
+        <div class="contact-icon">📍</div>
+        <h3>Адрес</h3>
+        <p>220036, г. Минск,<br>проезд Бетонный, д. 19А, оф. 4</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section>
+  <div class="container">
+    <div class="cta reveal">
+      <h2>Заходите в <span class="gradient-text">«Теремок»</span></h2>
+      <p>Свежий хлеб, ароматная выпечка, уютное кафе и дискотека по выходным — ждём вас в аг. Долгиново, ул. Советская, 2А.</p>
+      <div class="hero-buttons">
+        <a href="tel:+375177121965" class="btn">Позвонить</a>
+        <a href="#club" class="btn ghost">Диско-клуб</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ФУТЕР -->
+<footer>
+  <div class="logo" style="font-size:.95rem">
+    <div class="logo-mark" style="width:24px;height:24px;font-size:.75rem">⚙️</div>
+    <div class="logo-text">
+      <b>ГРЕС-плюс</b>
+      <small>УНП 190706678</small>
+    </div>
+  </div>
+  <div>© 2006–2026 ООО «ГРЕС-плюс». Все права защищены.</div>
+  <div class="socials">
+    <a href="tel:+375296088282" aria-label="Позвонить">📱</a>
+    <a href="mailto:gres2008@mail.ru" aria-label="Email">✉</a>
+    <a href="#contacts" aria-label="Контакты">📍</a>
+  </div>
+</footer>
+
+<!-- ==================== THREE.JS ==================== -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<script>
+/* ============================================================
+   1. ПРЕЛОАДЕР
+   ============================================================ */
+window.addEventListener('load', () => {
+  setTimeout(() => document.getElementById('loader').classList.add('hide'), 600);
+});
+
+/* ============================================================
+   2. ТЕМА
+   ============================================================ */
+const root = document.documentElement;
+const themeBtn = document.getElementById('themeBtn');
+let theme = 'dark';
+themeBtn.addEventListener('click', () => {
+  theme = theme === 'dark' ? 'light' : 'dark';
+  root.setAttribute('data-theme', theme);
+  themeBtn.textContent = theme === 'dark' ? '🌙' : '☀️';
+});
+
+/* ============================================================
+   3. THREE.JS — 3D СЦЕНА
+   ============================================================ */
+const canvas = document.getElementById('webgl');
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(60, innerWidth/innerHeight, 0.1, 1000);
+camera.position.z = 9;
+
+const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+renderer.setSize(innerWidth, innerHeight);
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+
+/* --- Свет --- */
+scene.add(new THREE.AmbientLight(0xffe4b5, 0.55));
+
+const dirLight = new THREE.DirectionalLight(0xffd9a0, 1.4);
+dirLight.position.set(5, 8, 6);
+scene.add(dirLight);
+
+const p1 = new THREE.PointLight(0xff8c42, 2, 25);
+p1.position.set(-5, 3, 4);
+scene.add(p1);
+
+const p2 = new THREE.PointLight(0x00d2ff, 1.6, 25);
+p2.position.set(5, -3, 4);
+scene.add(p2);
+
+const p3 = new THREE.PointLight(0xff2e93, 1.2, 25);
+p3.position.set(0, 6, -3);
+scene.add(p3);
+
+/* ============================================================
+   ВСПОМОГАТЕЛЬНАЯ: позиция по краям экрана
+   ============================================================ */
+function edgePosition() {
+  const side = Math.floor(Math.random() * 4);
+  let x, y;
+  if (side === 0) {
+    x = (Math.random() - 0.5) * 18;
+    y = 4.5 + Math.random() * 2;
+  } else if (side === 1) {
+    x = (Math.random() - 0.5) * 18;
+    y = -4.5 - Math.random() * 2;
+  } else if (side === 2) {
+    x = -8 - Math.random() * 3;
+    y = (Math.random() - 0.5) * 9;
+  } else {
+    x = 8 + Math.random() * 3;
+    y = (Math.random() - 0.5) * 9;
+  }
+  return { x, y, z: -3 - Math.random() * 3 };
+}
+
+/* ============================================================
+   3D-БАГЕТЫ И ЧЁРНЫЙ ХЛЕБ
+   ============================================================ */
+const breads = [];
+
+function createBaguette(baseColor, scoreColor) {
+  const group = new THREE.Group();
+
+  const curve = new THREE.CatmullRomCurve3([
+    new THREE.Vector3(-1.55, 0.08,  0.00),
+    new THREE.Vector3(-0.80, 0.05,  0.04),
+    new THREE.Vector3( 0.00, 0.02,  0.00),
+    new THREE.Vector3( 0.80, 0.05, -0.04),
+    new THREE.Vector3( 1.55, 0.08,  0.00)
+  ]);
+
+  const tubeGeo = new THREE.TubeGeometry(curve, 90, 0.30, 16, false);
+  const body = new THREE.Mesh(tubeGeo, new THREE.MeshStandardMaterial({
+    color: baseColor,
+    roughness: 0.88,
+    metalness: 0.04
+  }));
+  group.add(body);
+
+  const endMat = new THREE.MeshStandardMaterial({ color: baseColor, roughness: 0.88 });
+  const e1 = new THREE.Mesh(new THREE.SphereGeometry(0.30, 16, 16), endMat);
+  e1.position.copy(curve.getPoint(0));
+  group.add(e1);
+  const e2 = e1.clone();
+  e2.position.copy(curve.getPoint(1));
+  group.add(e2);
+
+  for (let i = -2; i <= 2; i++) {
+    const score = new THREE.Mesh(
+      new THREE.BoxGeometry(0.42, 0.02, 0.05),
+      new THREE.MeshStandardMaterial({ color: scoreColor, roughness: 1 })
+    );
+    score.position.set(i * 0.52, 0.31, 0.02);
+    score.rotation.z = -0.55;
+    score.rotation.x = 0.05;
+    group.add(score);
+  }
+  return group;
+}
+
+function createLoaf(baseColor, flourColor) {
+  const group = new THREE.Group();
+
+  const body = new THREE.Mesh(
+    new THREE.SphereGeometry(0.78, 32, 24),
+    new THREE.MeshStandardMaterial({
+      color: baseColor,
+      roughness: 0.96,
+      metalness: 0.02
+    })
+  );
+  body.scale.set(1, 0.62, 0.82);
+  group.add(body);
+
+  const flour = new THREE.Mesh(
+    new THREE.SphereGeometry(0.785, 32, 24, 0, Math.PI * 2, 0, Math.PI * 0.38),
+    new THREE.MeshStandardMaterial({
+      color: flourColor,
+      roughness: 1,
+      transparent: true,
+      opacity: 0.55
+    })
+  );
+  flour.scale.copy(body.scale).multiplyScalar(1.004);
+  group.add(flour);
+
+  for (let k = 0; k < 2; k++) {
+    const slit = new THREE.Mesh(
+      new THREE.BoxGeometry(0.95, 0.025, 0.05),
+      new THREE.MeshStandardMaterial({ color: 0x1a0e05, roughness: 1 })
+    );
+    slit.position.y = 0.46;
+    slit.rotation.y = k * Math.PI / 2;
+    group.add(slit);
+  }
+  return group;
+}
+
+/* --- Багеты (4 шт., по краям) --- */
+const baguetteColors = [0xd9a45a, 0xe6b655, 0xc99038, 0xd4a259];
+for (let i = 0; i < 4; i++) {
+  const bag = createBaguette(baguetteColors[i], 0x7a4620);
+  const p = edgePosition();
+  bag.position.set(p.x, p.y, p.z);
+  bag.scale.setScalar(0.75);
+  bag.rotation.set(
+    (Math.random() - 0.5) * 0.6,
+    Math.random() * Math.PI * 2,
+    (Math.random() - 0.5) * 0.8
+  );
+  bag.userData = {
+    speedX: (Math.random() - 0.5) * 0.004,
+    speedY: (Math.random() - 0.5) * 0.004 + 0.002,
+    floatSpeed: 0.4 + Math.random() * 0.4,
+    floatOffset: Math.random() * Math.PI * 2,
+    baseY: bag.position.y
+  };
+  scene.add(bag);
+  breads.push(bag);
+}
+
+/* --- Чёрный хлеб (3 шт., по краям) --- */
+const darkColors = [0x2f1c0e, 0x3d2413, 0x241407];
+const flourColors = [0x8b6a4a, 0xa4835c, 0x7a5a3d];
+for (let i = 0; i < 3; i++) {
+  const loaf = createLoaf(darkColors[i], flourColors[i]);
+  const p = edgePosition();
+  loaf.position.set(p.x, p.y, p.z);
+  loaf.scale.setScalar(0.85);
+  loaf.rotation.set(
+    (Math.random() - 0.5) * 0.4,
+    Math.random() * Math.PI * 2,
+    (Math.random() - 0.5) * 0.3
+  );
+  loaf.userData = {
+    speedX: (Math.random() - 0.5) * 0.003,
+    speedY: (Math.random() - 0.5) * 0.003 + 0.002,
+    floatSpeed: 0.5 + Math.random() * 0.4,
+    floatOffset: Math.random() * Math.PI * 2,
+    baseY: loaf.position.y
+  };
+  scene.add(loaf);
+  breads.push(loaf);
+}
+
+/* --- Булочки (2 шт., мелкие, по краям) --- */
+const buns = [];
+for (let i = 0; i < 2; i++) {
+  const bun = new THREE.Mesh(
+    new THREE.SphereGeometry(0.35, 28, 28),
+    new THREE.MeshStandardMaterial({
+      color: 0xffe0a0,
+      roughness: 0.9,
+      metalness: 0.03,
+      transparent: true,
+      opacity: 0.75
+    })
+  );
+  const p = edgePosition();
+  bun.position.set(p.x, p.y, p.z);
+  bun.userData = {
+    floatSpeed: 0.4 + Math.random() * 0.6,
+    floatOffset: Math.random() * Math.PI * 2,
+    baseY: bun.position.y,
+    rotSpeed: (Math.random() - 0.5) * 0.008
+  };
+  scene.add(bun);
+  buns.push(bun);
+}
+
+/* --- Частицы (кольцо вокруг центра) --- */
+const PCOUNT = 350;
+const positions = new Float32Array(PCOUNT * 3);
+for (let i = 0; i < PCOUNT; i++) {
+  const angle = Math.random() * Math.PI * 2;
+  const radius = 8 + Math.random() * 8;
+  positions[i * 3]     = Math.cos(angle) * radius;
+  positions[i * 3 + 1] = Math.sin(angle) * radius * 0.7;
+  positions[i * 3 + 2] = (Math.random() - 0.5) * 6;
+}
+const pGeo = new THREE.BufferGeometry();
+pGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+const pMat = new THREE.PointsMaterial({
+  color: 0xffd97a,
+  size: 0.07,
+  transparent: true,
+  opacity: 0.65,
+  blending: THREE.AdditiveBlending,
+  sizeAttenuation: true
+});
+const particles = new THREE.Points(pGeo, pMat);
+scene.add(particles);
+
+/* --- Параллакс --- */
+let mx = 0, my = 0, smx = 0, smy = 0;
+window.addEventListener('mousemove', e => {
+  mx = (e.clientX / innerWidth) - 0.5;
+  my = (e.clientY / innerHeight) - 0.5;
+});
+
+/* --- Анимация --- */
+let time = 0;
+function animate() {
+  requestAnimationFrame(animate);
+  time += 0.016;
+
+  smx += (mx - smx) * 0.05;
+  smy += (my - smy) * 0.05;
+  camera.position.x = smx * 2.5;
+  camera.position.y = -smy * 2.5;
+  camera.lookAt(0, 0, 0);
+
+  breads.forEach(b => {
+    b.rotation.x += b.userData.speedX;
+    b.rotation.y += b.userData.speedY;
+    b.position.y = b.userData.baseY +
+      Math.sin(time * b.userData.floatSpeed + b.userData.floatOffset) * 0.5;
+  });
+
+  buns.forEach(b => {
+    b.rotation.y += b.userData.rotSpeed;
+    b.rotation.x += b.userData.rotSpeed * 0.5;
+    b.position.y = b.userData.baseY + Math.sin(time * b.userData.floatSpeed + b.userData.floatOffset) * 0.4;
+  });
+
+  particles.rotation.y += 0.0005;
+  particles.rotation.x += 0.0002;
+
+  p1.intensity = 1.8 + Math.sin(time * 1.5) * 0.4;
+  p2.intensity = 1.4 + Math.sin(time * 1.8 + 1) * 0.4;
+
+  renderer.render(scene, camera);
+}
+animate();
+
+window.addEventListener('resize', () => {
+  camera.aspect = innerWidth / innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+});
+
+/* ============================================================
+   4. КУРСОР
+   ============================================================ */
+const dot = document.querySelector('.cursor-dot');
+const ring = document.querySelector('.cursor-ring');
+let rx = 0, ry = 0, tx = 0, ty = 0;
+
+window.addEventListener('mousemove', e => {
+  tx = e.clientX; ty = e.clientY;
+  dot.style.transform = `translate(${e.clientX}px,${e.clientY}px) translate(-50%,-50%)`;
+});
+
+function animateCursor() {
+  rx += (tx - rx) * 0.17;
+  ry += (ty - ry) * 0.17;
+  ring.style.transform = `translate(${rx}px,${ry}px) translate(-50%,-50%)`;
+  requestAnimationFrame(animateCursor);
+}
+animateCursor();
+
+document.querySelectorAll('a,button,.product,.gallery-item,.contact-card,.brand').forEach(el => {
+  el.addEventListener('mouseenter', () => ring.classList.add('grow'));
+  el.addEventListener('mouseleave', () => ring.classList.remove('grow'));
+});
+
+/* ============================================================
+   5. ХЕДЕР + ПРОГРЕСС
+   ============================================================ */
+const header = document.getElementById('header');
+const progress = document.getElementById('progress');
+function onScroll() {
+  const y = scrollY;
+  header.classList.toggle('scrolled', y > 40);
+  const max = document.documentElement.scrollHeight - innerHeight;
+  progress.style.width = (max > 0 ? (y / max) * 100 : 0) + '%';
+}
+window.addEventListener('scroll', onScroll, { passive: true });
+onScroll();
+
+/* ============================================================
+   6. REVEAL
+   ============================================================ */
+const revealObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      revealObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.15, rootMargin: '0px 0px -60px 0px' });
+document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+/* ============================================================
+   7. СЧЁТЧИКИ
+   ============================================================ */
+const counterObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    const el = e.target;
+    const target = +el.dataset.target;
+    const suffix = el.dataset.suffix || '';
+    const dur = 1800;
+    const start = performance.now();
+    function tick(now) {
+      const t = Math.min((now - start) / dur, 1);
+      const eased = 1 - Math.pow(1 - t, 3);
+      el.textContent = Math.round(target * eased) + suffix;
+      if (t < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+    counterObs.unobserve(el);
+  });
+}, { threshold: 0.5 });
+document.querySelectorAll('.stat-num').forEach(el => counterObs.observe(el));
+
+/* ============================================================
+   8. 3D TILT
+   ============================================================ */
+document.querySelectorAll('.tilt').forEach(card => {
+  card.addEventListener('mousemove', e => {
+    const r = card.getBoundingClientRect();
+    const px = (e.clientX - r.left) / r.width;
+    const py = (e.clientY - r.top) / r.height;
+    card.style.transition = 'transform .1s ease-out, box-shadow .4s, border-color .4s, background .4s';
+    card.style.transform = `perspective(1000px) rotateY(${(px - 0.5) * 14}deg) rotateX(${-(py - 0.5) * 14}deg) translateZ(14px)`;
+    card.style.setProperty('--mx', px * 100 + '%');
+    card.style.setProperty('--my', py * 100 + '%');
+  });
+  card.addEventListener('mouseleave', () => {
+    card.style.transition = 'transform .8s cubic-bezier(.2,.8,.2,1), box-shadow .5s, border-color .4s, background .4s';
+    card.style.transform = 'perspective(1000px) rotateY(0) rotateX(0) translateZ(0)';
+  });
+});
+
+/* ============================================================
+   9. ПАРАЛЛАКС-СЛОИ
+   ============================================================ */
+const visual = document.getElementById('visual');
+const layers = visual ? visual.querySelectorAll('.layer') : [];
+if (visual) {
+  visual.addEventListener('mousemove', e => {
+    const r = visual.getBoundingClientRect();
+    const px = (e.clientX - r.left) / r.width - 0.5;
+    const py = (e.clientY - r.top) / r.height - 0.5;
+    layers.forEach(l => {
+      const d = +l.dataset.depth;
+      l.style.transform = `translate(${px * d}px, ${py * d}px)`;
+    });
+  });
+  visual.addEventListener('mouseleave', () => {
+    layers.forEach(l => l.style.transform = 'translate(0,0)');
+  });
+}
+
+/* ============================================================
+   10. БЕГУЩАЯ СТРОКА — дублируем
+   ============================================================ */
+const marquee = document.getElementById('marquee');
+marquee.innerHTML += marquee.innerHTML;
+
+/* ============================================================
+   11. ПЛАВНЫЙ СКРОЛЛ
+   ============================================================ */
+document.querySelectorAll('a[href^="#"]').forEach(link => {
+  link.addEventListener('click', e => {
+    const id = link.getAttribute('href');
+    if (id === '#') return;
+    const t = document.querySelector(id);
+    if (!t) return;
+    e.preventDefault();
+    window.scrollTo({ top: t.offsetTop - 70, behavior: 'smooth' });
+  });
+});
+</script>
+</body>
+</html>
